@@ -1,4 +1,21 @@
-whispercpp:
+whisper: # wyoming endpoint for HASS
+    container_name: whisper
+    command:
+      --uri tcp://0.0.0.0:10300
+      --api http://whispercpp:8910/inference
+      --debug
+    image: # use this here as-is: https://github.com/ser/wyoming-whisper-api-client/blob/main/Dockerfile
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Europe/Vienna
+    restart: unless-stopped
+    ports:
+      - 10301:10300
+    networks:
+      - whisper
+
+whispercpp: # whisper-server backend for wyoming 
     container_name: whispercpp
     command: 
       --language de
@@ -14,7 +31,7 @@ whispercpp:
     security_opt:
       - seccomp=unconfined
     group_add:
-      - 44 
+      - 44 # use the id returned by  $(getent group video)
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - #storage:/data
@@ -24,4 +41,4 @@ whispercpp:
     expose:
       - 8910
     networks:
-      - default      
+      - whisper
