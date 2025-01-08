@@ -1,0 +1,27 @@
+whispercpp:
+    container_name: whispercpp
+    command: 
+      --language de
+      --ov-e-device GPU
+      --beam-size 5
+      --model /data/ggml-medium.bin
+      --host 0.0.0.0
+      --port 8910
+      --debug-mode
+    image: docker.io/library/monoamin-openvino-whisper:v31
+    devices:
+      - /dev/dri:/dev/dri
+    security_opt:
+      - seccomp=unconfined
+    group_add:
+      - 44 
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /mnt/array/homeassistant/whisper:/data
+    environment:
+      - TZ=Europe/Vienna
+    restart: unless-stopped
+    expose:
+      - 8910
+    networks:
+      - default      
