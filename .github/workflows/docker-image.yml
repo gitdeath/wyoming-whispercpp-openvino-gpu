@@ -17,6 +17,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set up image ID and version
+      id: vars
+      run: |
+        echo "image_id=ghcr.io/${{ github.repository_owner }}/my-image-name" >> $GITHUB_OUTPUT
+        echo "version=$(date +%s)" >> $GITHUB_OUTPUT
+
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@v3
       with:
@@ -26,14 +32,11 @@ jobs:
 
     - name: Build the Docker image
       run: |
-        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/my-image-name
-        VERSION=$(date +%s)
-        docker build . --file whispercpp-openvino.Dockerfile --tag $IMAGE_ID:$VERSION
-        docker tag $IMAGE_ID:$VERSION $IMAGE_ID:latest
+        docker build . --file whispercpp-openvino.Dockerfile \
+          --tag ${{ steps.vars.outputs.image_id }}:${{ steps.vars.outputs.version }} \
+          --tag ${{ steps.vars.outputs.image_id }}:latest
 
     - name: Push the Docker image
       run: |
-        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/my-image-name
-        VERSION=$(date +%s)
-        docker push $IMAGE_ID:$VERSION
-        docker push $IMAGE_ID:latest
+        docker push ${{ steps.vars.outputs.image_id }}:${{ steps.vars.outputs.version }}
+        docker push ${{ steps.vars.outputs.image_id }}:latest
