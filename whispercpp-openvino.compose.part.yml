@@ -8,7 +8,7 @@ whisper: # wyoming endpoint for HASS
     volumes:
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - TZ=Europe/Vienna
+      - TZ=America/Chicago
     restart: unless-stopped
     ports:
       - 10301:10300
@@ -36,7 +36,7 @@ whispercpp: # whisper-server backend for wyoming
       - /etc/localtime:/etc/localtime:ro
       - #storage:/data
     environment:
-      - TZ=Europe/Vienna
+      - TZ=America/Chicago
     restart: unless-stopped
     expose:
       - 8910
